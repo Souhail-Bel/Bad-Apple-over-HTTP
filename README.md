@@ -1,5 +1,5 @@
 # Bad Apple over HTTP
-This is an **MJPEG** server used, in this case, to stream *Bad Apple!! PV*. Nonetheless, it use can be extended to any video or even feed from the video camera. 
+This is an **MJPEG** server used, in this case, to stream *Bad Apple!! PV*. Nonetheless, its use can be extended to any video or even feed from the video camera. 
 ## Preview
 <img width="644" height="498" alt="Bad Apple streamed on 192.168.1.144:28333" src="https://github.com/user-attachments/assets/d4a6cdb7-9dda-46f6-9158-acd0db55473e" />
 
