@@ -1,17 +1,24 @@
+import sys
 import socket
 # from typing import Union, Tuple
 
-HTML_FRAME = f"""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Test</title>
-</head>
-<body>
-    <p>This is a real test.</p>
-</body>
-</html>
-"""
+# Preload HTML page
+try:
+    with open('res/index.html', 'r') as f:
+        HTML_FRAME = f.read()
+    HTML_BYTES = HTML_FRAME.encode('utf-8', errors='replace')
+    HTML_RESPONSE = b"".join([
+        b"HTTP/1.1 200 OK\r\n",
+        b"Content-Type: text/html\r\n",
+        f"Content-Length: {len(HTML_BYTES)}\r\n".encode('utf-8'),
+        b"Connection: close\r\n",
+        b"\r\n",
+        HTML_BYTES
+    ])
+except Exception as e:
+    print(f"Error: {e}")
+    sys.exit(1)
+
 
 def createSocket(HOST: str, PORT: int) -> socket.socket:
     """
@@ -43,21 +50,37 @@ def handleClient(client_socket: socket.socket, client_addr: str):
         void
     """
     
-    request = client_socket.recv(4096).decode('ISO 8859-1', errors='replace')
-    
-    request_lines = request.split('\r\n')
-    request_head = request_lines[0].strip()
-    print(f"Request: {request_head}")
-    
-    html_bytes = HTML_FRAME.encode('ISO 8859-1', errors='replace')
-    response_header = b"".join([
-        b"HTTP/1.1 200 OK\r\n",
-        b"Content-Type: text/html\r\n",
-        f"Content-Length: {len(html_bytes)}\r\n".encode('ISO 8859-1'),
-        b"Connection: close\r\n",
-        b"\r\n"
-    ])
-    
-    client_socket.sendall(response_header+html_bytes)
+    try:
+        request = client_socket.recv(4096).decode('UTF-8', errors='replace')
+        
+        request_lines = request.split('\r\n')
+        request_head = request_lines[0].strip()
+        print(f"Request: {request_head}")
+        path = request_head.split(' ')[1]
+        
+        if path == '/badapple.jpg':
+            try:
+                with open('res/badapple.jpg', 'rb') as f:
+                    IMAGE_BYTES = f.read()
+                
+                IMAGE_RESPONSE = b"".join([
+                    b"HTTP/1.1 200 OK\r\n",
+                    b"Content-Type: image/jpeg\r\n",
+                    f"Content-Length: {len(IMAGE_BYTES)}\r\n".encode('utf-8'),
+                    b"Connection: close\r\n",
+                    b"\r\n",
+                    IMAGE_BYTES
+                ])
+                
+                client_socket.sendall(IMAGE_RESPONSE)
+            except FileNotFoundError:
+                print("Error: Unable to find badapple.jpg")
+                client_socket.sendall(b"HTTP/1.1 404 Not Found\r\n\r\nNot Found")
+        else:
+            client_socket.sendall(HTML_RESPONSE)
+    except Exception as e:
+        print(f"❌ Error in client handling: {e}")
+    finally:
+        client_socket.close()
     
     return
