@@ -1,4 +1,4 @@
-from server import *
+from server import createSocket, handleClient
 
 # -- CONFIGURATIONS --
 SERVER_IP       = "192.168.1.144"
@@ -7,8 +7,10 @@ SERVER_SOCKET   = None
 
 VIDEO_SOURCE    = "BadApple.mp4"
 
-
-if __name__ == "__main__":
+def main():
+    """
+    Main program function
+    """
     
     # Capture video on a separate thread
     
@@ -39,4 +41,7 @@ if __name__ == "__main__":
             print("Server socket closed.")
         print("Server has been shut.")
     
-    pass
+
+if __name__ == "__main__":
+    main()
+    
