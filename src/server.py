@@ -1,5 +1,6 @@
 import sys
 import socket
+import threading
 # from typing import Union, Tuple
 
 # Preload HTML page
@@ -20,23 +21,51 @@ except Exception as e:
     sys.exit(1)
 
 
-def createSocket(HOST: str, PORT: int) -> socket.socket:
+def startServer(HOST: str, PORT: int):
     """
-    Create socket and bind to HOST:PORT
+    Start a server bound to HOST:PORT and listen for client requests
     
     Args:
         HOST: string, representing the IPv4 address of the host
         PORT: integer, representing the port
     
     Returns:
-        Socket
+        void
     """
     
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # Allow reuse to avoid conflict next time
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((HOST, PORT))
-    return s
+    try:
+        # Start socket HTTP server
+        SERVER_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Allow reuse to avoid conflict next time
+        SERVER_SOCKET.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        SERVER_SOCKET.bind((HOST, PORT))
+        # Queue up to 5 connections
+        SERVER_SOCKET.listen(5)
+        print(f"🌐 Started MJPEG server on http://{HOST}:{PORT}")
+        
+        # Handle clients
+        # Multithreading is used for the purpose of handling each client connection properly
+        # This would've been a problem since our aim is keeping the connection (video stream)
+        while True:
+            client_socket, client_addr = SERVER_SOCKET.accept()
+            print(f"🔗 Connection from client {client_addr}")
+            # handleClient(client_socket, client_addr)
+            
+            # Start a new thread to handle each client connection
+            client_thread = threading.Thread(target=handleClient, args=(client_socket, client_addr), daemon=True)
+            client_thread.start()
+            
+    except KeyboardInterrupt:
+        print("Exiting gracefully...")
+        
+    except Exception as e:
+        print(f"❌ Server error: {e}")
+        
+    finally:
+        if SERVER_SOCKET:
+            SERVER_SOCKET.close()
+            print("Server socket closed.")
+        print("🛑 Server has been shut.")
 
 def handleClient(client_socket: socket.socket, client_addr: str):
     """
