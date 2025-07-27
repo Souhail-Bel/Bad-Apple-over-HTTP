@@ -3,6 +3,9 @@ This is an **MJPEG** server used, in this case, to stream *Bad Apple!! PV*. None
 ## Preview
 <img width="644" height="498" alt="Bad Apple streamed on 192.168.1.144:28333" src="https://github.com/user-attachments/assets/d4a6cdb7-9dda-46f6-9158-acd0db55473e" />
 
+Example stream on 2 laptops (one of which is the server) and a tablet:
+
+[![Bad Apple streamed clip](https://img.youtube.com/vi/Era4fFMeal4/0.jpg)](https://www.youtube.com/watch?v=Era4fFMeal4)
 
 ## Building this project
 The project relies on OpenCV to turn the video into .jpg frames. Either install it or run:
