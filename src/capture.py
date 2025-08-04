@@ -47,7 +47,11 @@ class VideoCaptureHandler:
             ret, frame = self.cap.read()
             
             if not ret:
-                break
+                # Loop once done
+                cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                print("Looping...")
+                continue 
+                # break
             else:
                 LATEST_FRAME = frame
         
