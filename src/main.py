@@ -4,7 +4,7 @@ from server import startServer, handleClient
 import capture
 
 # -- CONFIGURATIONS --
-SERVER_IP       = "192.168.1.144"
+SERVER_IP       = "192.168.1.2"
 SERVER_PORT     = 28333
 
 VIDEO_SOURCE    = "res/BadApple.mp4"
